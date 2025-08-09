@@ -60,6 +60,7 @@ Once implemented, the project will follow this modular structure:
 ## 🏁 Getting Started
 
 ### ✅ Prerequisites
+
 - Node.js (v18+ recommended)
 - npm or yarn
 - MongoDB (local or hosted)
@@ -73,38 +74,46 @@ Once implemented, the project will follow this modular structure:
 We welcome contributions from everyone! Please follow these steps:
 
 ### 1. ⭐ Star this Repository
+
 Click the `Star` button at the top-right of this page.
 
 ### 2. 🍴 Fork the Repository
+
 Click the **Fork** button on the top-right to create your copy.
 
 ### 3. 🧑‍💻 Clone Your Fork
+
 \`\`\`bash
 git clone https://github.com/YOUR_USERNAME/chattersapce.git
 cd chattersapce
 \`\`\`
 
 ### 4. 🚀 Set Up Environment
+
 \`\`\`bash
 cp .env.example .env
 npm install
 \`\`\`
 
 ### 5. 🔧 Create a New Branch
+
 \`\`\`bash
 git checkout -b feat/your-feature-name
 \`\`\`
 
 ### 6. 💡 Work on Your Feature
+
 Follow the folder structure and keep code modular.
 
 ### 7. ✅ Commit Your Changes
+
 \`\`\`bash
 git add .
 git commit -m "feat: add initial structure for XYZ"
 \`\`\`
 
 ### 8. 📤 Push and Open a PR
+
 \`\`\`bash
 git push origin feat/your-feature-name
 \`\`\`
@@ -125,6 +134,7 @@ Then open a Pull Request on GitHub.
 ---
 
 ## 📌 Contribution Guidelines
+
 - Follow the [Contributing Guide](CONTRIBUTING.md)
 - Keep PRs focused and atomic
 - Write clear commit messages
@@ -134,11 +144,12 @@ Then open a Pull Request on GitHub.
 ---
 
 ## 📮 Communication
+
 - GitHub Issues for bug reports and discussions
 <!-- - Email: `opensource@chattersapce.dev` -->
 
 ---
 
 ## 📄 License
+
 This project is open-source and available under the [MIT License](LICENSE).
-# ChatterSpace
