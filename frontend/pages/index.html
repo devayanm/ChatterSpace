@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatPunk Terminal</title>
+    <link rel="stylesheet" href="/pages/style.css">
+</head>
+<body>
+    <!-- Username Entry Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <h1 class="title">CHATTERSPACE</h1>
+            <p class="subtitle">// NEURAL LINK INTERFACE //</p>
+            <div class="input-group">
+                <input type="text" id="usernameInput" class="cyber-input" placeholder="ENTER USERNAME" maxlength="20">
+            </div>
+            <button id="connectButton" class="cyber-button">CONNECT</button>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div id="chatScreen" class="chat-screen">
+        <div class="chat-header">
+            <div class="welcome-text" id="welcomeText">WELCOME TO CHATPUNK</div>
+        </div>
+        
+        <div class="chat-container" id="chatContainer"></div>
+        
+        <div class="chat-input-container">
+            <input type="text" id="messageInput" class="chat-input" placeholder="TYPE MESSAGE..." maxlength="500">
+            <button id="sendButton" class="send-button">SEND</button>
+        </div>
+    </div>
+
+    <div id="status" class="status disconnected">OFFLINE</div>
+
+    <script>
+        let socket = null;
+        let username = '';
+        let clientId = parseInt(localStorage.getItem('chatpunk_clientId')) || Math.floor(Math.random() * 10000);
+
+        // Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const chatScreen = document.getElementById('chatScreen');
+        const usernameInput = document.getElementById('usernameInput');
+        const connectButton = document.getElementById('connectButton');
+        const welcomeText = document.getElementById('welcomeText');
+        const chatContainer = document.getElementById('chatContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const status = document.getElementById('status');
+        
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+        
+        // Show notification
+        function showNotification(title, body, type = 'message') {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification(title, {
+                    body: body,
+                    icon: '/static/favicon.ico',
+                    badge: '/static/favicon.ico',
+                    tag: 'chatpunk-' + type,
+                    silent: false
+                });
+                
+                // Auto-close notification after 4 seconds
+                setTimeout(() => {
+                    notification.close();
+                }, 4000);
+            }
+        }
+        
+        // Handle tab close/page unload - proper logout
+        function handlePageUnload() {
+            // Clear session data
+            localStorage.removeItem('chatpunk_username');
+            localStorage.removeItem('chatpunk_clientId');
+            
+            // Close WebSocket connection
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.close();
+            }
+        }
+        
+        // Check for saved session on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Request notification permission on page load
+            requestNotificationPermission();
+            
+            const savedUsername = localStorage.getItem('chatpunk_username');
+            const savedClientId = localStorage.getItem('chatpunk_clientId');
+            
+            if (savedUsername && savedClientId) {
+                username = savedUsername;
+                clientId = parseInt(savedClientId);
+                usernameInput.value = username;
+                connectToChat();
+            }
+            
+            // Handle tab close/page unload
+            window.addEventListener('beforeunload', handlePageUnload);
+            window.addEventListener('unload', handlePageUnload);
+        });
+
+        // Connect to chat
+        function connectToChat() {
+            username = usernameInput.value.trim();
+            if (!username) {
+                usernameInput.style.borderColor = '#ff0000';
+                return;
+            }
+
+            // Get current host for WebSocket connection
+            const host = window.location.host;
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            
+            socket = new WebSocket(`${protocol}//${host}/ws/${clientId}/${encodeURIComponent(username)}`);
+
+            socket.onopen = function(event) {
+                // Save session to localStorage
+                localStorage.setItem('chatpunk_username', username);
+                localStorage.setItem('chatpunk_clientId', clientId.toString());
+                
+                loginScreen.style.display = 'none';
+                chatScreen.style.display = 'flex';
+                welcomeText.textContent = `WELCOME TO CHATPUNK ${username.toUpperCase()}`;
+                status.textContent = 'ONLINE';
+                status.className = 'status connected';
+            };
+
+            socket.onmessage = function(event) {
+                const message = event.data;
+                
+                if (message.startsWith('HISTORY:')) {
+                    // Handle message history - split only on first 2 colons
+                    const parts = message.split(':');
+                    const msgType = parts[1];
+                    const msgContent = parts.slice(2).join(':'); // Rejoin remaining parts
+                    addMessage(msgContent, msgType, true);
+                } else if (message.startsWith('SYSTEM:')) {
+                    // Handle system messages
+                    const systemMsg = message.replace('SYSTEM:', '');
+                    addMessage(systemMsg, 'system');
+                    
+                    // Show notification for join/leave messages
+                    if (systemMsg.includes('joined')) {
+                        showNotification('ChatPunk', systemMsg, 'join');
+                    } else if (systemMsg.includes('left')) {
+                        showNotification('ChatPunk', systemMsg, 'leave');
+                    }
+                } else if (message.startsWith('You:')) {
+                    // Handle user's own messages
+                    const userMsg = message.replace('You:', `${username}:`);
+                    addMessage(userMsg, 'user');
+                    // No notification for own messages
+                } else {
+                    // Handle other users' messages
+                    addMessage(message, 'other');
+                    
+                    // Show notification for other users' messages
+                    if (message.includes(':')) {
+                        const colonIndex = message.indexOf(':');
+                        const sender = message.substring(0, colonIndex);
+                        const messageContent = message.substring(colonIndex + 1);
+                        showNotification(`New message from ${sender}`, messageContent.trim(), 'chat');
+                    }
+                }
+            };
+
+            socket.onclose = function(event) {
+                status.textContent = 'OFFLINE';
+                status.className = 'status disconnected';
+                addMessage('Connection terminated', 'system');
+            };
+
+            socket.onerror = function(error) {
+                addMessage('Neural link error detected', 'system');
+            };
+            
+            // Handle page unload (disconnect)
+            window.addEventListener('beforeunload', function() {
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.close();
+                }
+            });
+        }
+
+        // Add message to chat
+        function addMessage(message, type, isHistory = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            
+            // Format usernames in messages to be bold
+            if ((type === 'user' || type === 'other') && message.includes(':')) {
+                const colonIndex = message.indexOf(':');
+                const username = message.substring(0, colonIndex);
+                const messageContent = message.substring(colonIndex + 1);
+                
+                messageDiv.innerHTML = `<span class="message-username">${username}:</span>${messageContent}`;
+            } else if (type === 'system' && (message.includes('joined') || message.includes('left'))) {
+                // Make usernames bold in join/leave messages
+                if (message.includes('joined')) {
+                    const username = message.split(' joined')[0];
+                    const restOfMessage = message.replace(username, '');
+                    messageDiv.innerHTML = `<span class="message-username">${username}</span>${restOfMessage}`;
+                } else if (message.includes('left')) {
+                    const username = message.split(' left')[0];
+                    const restOfMessage = message.replace(username, '');
+                    messageDiv.innerHTML = `<span class="message-username">${username}</span>${restOfMessage}`;
+                } else {
+                    messageDiv.textContent = message;
+                }
+            } else {
+                messageDiv.textContent = message;
+            }
+            
+            // Add history indicator for old messages
+            if (isHistory) {
+                messageDiv.style.opacity = '0.7';
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Send message
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message && socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(message);
+                messageInput.value = '';
+            }
+        }
+
+        // Event listeners
+        connectButton.addEventListener('click', connectToChat);
+        
+        usernameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                connectToChat();
+            }
+            usernameInput.style.borderColor = '#00ff00';
+        });
+
+        sendButton.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
