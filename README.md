@@ -83,23 +83,23 @@ Click the **Fork** button on the top-right to create your copy.
 
 ### 3. 🧑‍💻 Clone Your Fork
 
-\`\`\`bash
+```bash
 git clone https://github.com/YOUR_USERNAME/chattersapce.git
 cd chattersapce
-\`\`\`
+```
 
 ### 4. 🚀 Set Up Environment
 
-\`\`\`bash
+```bash
 cp .env.example .env
 npm install
-\`\`\`
+```
 
 ### 5. 🔧 Create a New Branch
 
-\`\`\`bash
+```bash
 git checkout -b feat/your-feature-name
-\`\`\`
+```
 
 ### 6. 💡 Work on Your Feature
 
@@ -107,16 +107,16 @@ Follow the folder structure and keep code modular.
 
 ### 7. ✅ Commit Your Changes
 
-\`\`\`bash
+```bash
 git add .
 git commit -m "feat: add initial structure for XYZ"
-\`\`\`
+```
 
 ### 8. 📤 Push and Open a PR
 
-\`\`\`bash
+```bash
 git push origin feat/your-feature-name
-\`\`\`
+```
 Then open a Pull Request on GitHub.
 
 ---
