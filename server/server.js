@@ -24,15 +24,38 @@ app.get('/api/channels', (req, res) => {
 // REST API: Create a new channel
 app.post('/api/channels', (req, res) => {
   const { name } = req.body;
+
+  // Basic type check
   if (!name || typeof name !== 'string') {
     return res.status(400).json({ error: 'Channel name required' });
   }
-  // Generate a simple id
-  const id = name.toLowerCase().replace(/\s+/g, '-');
+
+  // Trim and ensure non-empty name
+  const trimmed = name.trim();
+  if (trimmed.length === 0) {
+    return res.status(400).json({ error: 'Channel name cannot be empty or whitespace' });
+  }
+
+  // Simple slugify to create a safe id from the name
+  const slugify = (s) =>
+    s
+      .toLowerCase()
+      .normalize('NFKD')                // decompose accents
+      .replace(/[\u0300-\u036f]/g, '') // remove diacritics
+      .replace(/[^a-z0-9]+/g, '-')     // non-alphanum -> hyphen
+      .replace(/^-+|-+$/g, '')         // trim leading/trailing hyphens
+      .replace(/-{2,}/g, '-');         // collapse multiple hyphens
+
+  const id = slugify(trimmed);
+  if (!id) {
+    return res.status(400).json({ error: 'Channel name is not valid for id generation' });
+  }
+
   if (channels.find(c => c.id === id)) {
     return res.status(409).json({ error: 'Channel already exists' });
   }
-  const channel = { id, name, messages: [] };
+
+  const channel = { id, name: trimmed, messages: [] };
   channels.push(channel);
   res.status(201).json(channel);
 });
