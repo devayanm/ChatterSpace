@@ -7,7 +7,7 @@ const sendToken = (user, res) => {
         expiresIn: '7d',
     });
 
-    res.cookie('toke', token, {
+    res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', 
         sameSite: 'strict',
@@ -106,9 +106,96 @@ const logoutUser = async (req, res) => {
   });
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
+// by Samay2006
+// @desc Update user details (name, username, email)
+// @route   PATCH /update/:id
+const updateuser=async(req,res)=>{
+try {
+    const  {uname,uusername,uemail}=req.body;
+    const {id}=req.params;
+if(!(uname ||uusername||uemail)){
+    return res.status(400).json({success:false,message:"fill at least one of them!"})
+}
+
+// Updating only the values that are provided
+const updateFields = {};
+if (uemail) updateFields.email = uemail;
+if (uname) updateFields.name = uname;
+if (uusername) updateFields.username = uusername;
+
+const user = await User.findByIdAndUpdate(
+    id,
+    { $set: updateFields },
+    { new: true }
+).select("-password");
+
+// if user not found
+if(!user){
+    return res.status(404).json({success:false,message:"User not found!"})
+}
+res.status(200).json({success:true,message:"Details updated successfully", data:user})
+
+
+} catch (error) {
+  return  res.status(500).json({success:false,message:error.message})
+
+}
+}
+// by Samay2006
+// @desc    Get user details by ID
+// @route   GET /user/:id
+const getuserbyid=async(req,res)=>{
+    try {
+        const {id}=req.params;
+        const user=await User.findById(id).select("-password");
+        if(!user){
+        return res.status(404).json({success:false,message:"User not found!"})
+}
+res.status(200).json({success:true,message:"User details fetched successfully", data:user})
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message,
+
+        });
+    }
+}
+// by Samay2006
+// @desc Delete user
+// @route DELETE /user/:id
+const deleteuser=async (req,res) => {
+try {
+    const {id}=req.params;
+    const user=await User.findByIdAndDelete(id)
+    
+    if(!user){
+        return res.status(404).json({
+    success:false,
+    message:"User not found!"
+    })
+    }
+    
+    res.status(200).json({
+        success:true,
+        message:"User Deleted successfully", 
+        });
+    
+} catch (error) {
+         return res.status(500).json({
+            success:false,
+            message:error.message,
+})
+}
+    
+}
+
 
 module.exports = {
     signupUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    updateuser,
+    getuserbyid,
+    deleteuser,
 }
