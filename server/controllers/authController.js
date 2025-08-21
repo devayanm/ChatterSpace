@@ -116,14 +116,18 @@ try {
 if(!(uname ||uusername||uemail)){
     return res.status(400).json({success:false,message:"fill at least one of them!"})
 }
-const user =await User.findByIdAndUpdate(id,{
-    $set:{
-        email:uemail,
-        name:uname,
-        username:uusername
 
-    }
-},{new:true}).select("-password");
+// Updating only the values that are provided
+const updateFields = {};
+if (uemail) updateFields.email = uemail;
+if (uname) updateFields.name = uname;
+if (uusername) updateFields.username = uusername;
+
+const user = await User.findByIdAndUpdate(
+    id,
+    { $set: updateFields },
+    { new: true }
+).select("-password");
 
 // if user not found
 if(!user){
