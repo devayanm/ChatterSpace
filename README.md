@@ -37,19 +37,23 @@ Once implemented, the project will follow this modular structure:
 
 ```
 /chattersapce
-├── backend/
+├── server/
 │   ├── models/
 │   ├── controllers/
 │   ├── routes/
+|   ├── .env.example
+|   ├── .env
 │   ├── sockets/
 │   └── server.js
-├── frontend/
+├── client/
 │   ├── components/
 │   ├── pages/
+│   |   └── AuthPage.jsx
 │   ├── hooks/
 │   └── App.jsx
 ├── utils/
 ├── .env.example
+├── .env
 └── README.md
 ```
 
