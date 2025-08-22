@@ -72,12 +72,27 @@ app.post('/api/channels/:id/messages', (req, res) => {
 
 // Socket.io: Join channel and receive messages
 io.on('connection', (socket) => {
+  console.log('⚡ User connected:', socket.id);
+
   socket.on('joinChannel', (channelId) => {
     socket.join(channelId);
   });
+
+  // ✅ Typing indicator events
+  socket.on('typing-start', ({ channelId, user }) => {
+    socket.to(channelId).emit('user-typing', { channelId, user });
+  });
+
+  socket.on('typing-stop', ({ channelId, user }) => {
+    socket.to(channelId).emit('user-stopped-typing', { channelId, user });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('❌ User disconnected:', socket.id);
+  });
 });
 
-//Authentication routes
+// Authentication routes
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
