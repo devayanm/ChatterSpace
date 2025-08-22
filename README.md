@@ -7,6 +7,8 @@ We’re developing a **scalable, modular, and real-time conversations platform**
 
 ---
 
+[![OSCI-Project-Banner.png](https://i.postimg.cc/76mJvBmF/OSCI-Project-Banner.png)](https://postimg.cc/8JfzMb84)
+
 ## 🧠 Goal
 
 Our objective is to design and develop a fully functional **real-time chat & discussions system** that goes beyond traditional apps like Discord.  
