@@ -5,7 +5,15 @@ const http = require('http');
 const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+
+// ✅ Added CORS configuration for Socket.IO (keeping original structure)
+// ✅ Added CORS support for typing indicators
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
 
 app.use(express.json());
 
@@ -70,15 +78,28 @@ app.post('/api/channels/:id/messages', (req, res) => {
   res.status(201).json(message);
 });
 
-// Socket.io: Join channel and receive messages
+// Socket.io: Enhanced connection handling
 io.on('connection', (socket) => {
   console.log('⚡ User connected:', socket.id);
 
+  // ✅ Join channel functionality
   socket.on('joinChannel', (channelId) => {
     socket.join(channelId);
+    console.log(`👤 Socket ${socket.id} joined channel: ${channelId}`);
   });
 
-  // ✅ Typing indicator events
+  // ✅ Fixed: Correct event names matching frontend expectations
+  socket.on('typing', ({ channelId, user }) => {
+    console.log(`⌨️ ${user} is typing in ${channelId}`);
+    socket.to(channelId).emit('user-typing', { channelId, user });
+  });
+
+  socket.on('stop-typing', ({ channelId, user }) => {
+    console.log(`⌨️ ${user} stopped typing in ${channelId}`);
+    socket.to(channelId).emit('user-stopped-typing', { channelId, user });
+  });
+
+  // ✅ Keep original typing indicator events (for backward compatibility)
   socket.on('typing-start', ({ channelId, user }) => {
     socket.to(channelId).emit('user-typing', { channelId, user });
   });

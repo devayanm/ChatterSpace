@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, MessageCircle, Users, Shield, Zap } from 'lucide-react';
 
-const AuthPage = ({ socket }) => {  // ✅ Accept socket prop
+const AuthPage = ({ socket, typingUtils }) => {  // ✅ Accept socket prop + typingUtils
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -11,12 +11,38 @@ const AuthPage = ({ socket }) => {  // ✅ Accept socket prop
     displayName: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  // ✅ Added state for typing indicator demo
+  const [demoMessage, setDemoMessage] = useState('');
+  const [typingTimeout, setTypingTimeout] = useState(null);
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  // ✅ Enhanced demo message input with typing indicators
+  const handleDemoMessageChange = (e) => {
+    setDemoMessage(e.target.value);
+    
+    // Only emit typing if user is set and socket connected
+    if (typingUtils && socket && socket.connected) {
+      // Emit typing start
+      typingUtils.emitTyping('general');
+      
+      // Clear existing timeout
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+      
+      // Set timeout to stop typing after 1 second of inactivity
+      const timeout = setTimeout(() => {
+        typingUtils.emitStopTyping('general');
+      }, 1000);
+      
+      setTypingTimeout(timeout);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -28,12 +54,18 @@ const AuthPage = ({ socket }) => {  // ✅ Accept socket prop
       console.log(isLogin ? 'Login attempt:' : 'Signup attempt:', formData);
       setIsLoading(false);
       
-      // ✅ After successful login, you could emit user joined event
+      // ✅ After successful login, setup user for typing indicators
       if (socket && socket.connected) {
+        const userName = formData.displayName || formData.username || formData.email;
         socket.emit('user-authenticated', {
-          user: formData.displayName || formData.username || formData.email,
+          user: userName,
           timestamp: new Date().toISOString()
         });
+        
+        // ✅ Set current user for typing indicators
+        if (typingUtils) {
+          typingUtils.setCurrentUser(userName);
+        }
       }
       
       // Here you would make actual API calls to your backend
@@ -107,6 +139,29 @@ const AuthPage = ({ socket }) => {  // ✅ Accept socket prop
                 </div>
               ))}
             </div>
+
+            {/* ✅ Typing Indicator Demo Section */}
+            {socket && socket.connected && (
+              <div className="mt-8 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
+                <h3 className="text-white font-semibold mb-3 flex items-center">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Typing Indicator Demo
+                </h3>
+                <input
+                  type="text"
+                  value={demoMessage}
+                  onChange={handleDemoMessageChange}
+                  placeholder="Type here to test typing indicators..."
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400"
+                />
+                {/* Show typing users */}
+                {typingUtils && typingUtils.typingUsers.size > 0 && (
+                  <div className="mt-2 text-xs text-purple-300">
+                    {Array.from(typingUtils.typingUsers).join(', ')} is typing...
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
