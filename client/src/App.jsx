@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 import AuthPage from "./pages/AuthPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import GettingStartedPage from "./pages/GettingStartedPage";
+import ContributingPage from "./pages/ContributingPage";
+import CodeOfConductPage from "./pages/CodeOfConductPage";
+import LicensePage from "./pages/LicensePage";
+import TechStackPage from "./pages/TechStackPage";
+import DocumentationPage from "./pages/DocumentationPage";
+import IssuesPage from "./pages/IssuesPage";
+import FeatureRequestsPage from "./pages/FeatureRequestsPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
 
 // ✅ Connect socket to backend
 const socket = io("http://localhost:5000"); // change to your backend URL
@@ -61,23 +74,33 @@ const App = () => {
   };
 
   return (
-    <div>
-      {/* ✅ Connection indicator for debugging */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-2 right-2 z-50 bg-black/50 text-white p-2 rounded text-xs">
-          Socket: {socket.connected ? '🟢 Connected' : '🔴 Disconnected'}
-          {typingUsers.size > 0 && (
-            <div>Typing: {Array.from(typingUsers).join(', ')}</div>
-          )}
-        </div>
-      )}
-
-      {/* Later you can conditionally render ChatPage after login */}
-      <AuthPage 
-        socket={socket} 
-        typingUtils={{ emitTyping, emitStopTyping, typingUsers, setCurrentUser }} 
-      />
-    </div>
+    <Router>
+      <ScrollToTop />
+      <div>
+        <Routes>
+          {/* Main Application - Auth Page with Footer */}
+          <Route path="/" element={
+            <AuthPage 
+              socket={socket} 
+              typingUtils={{ emitTyping, emitStopTyping, typingUsers, setCurrentUser }} 
+            />
+          } />
+          
+          {/* Internal Pages */}
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/getting-started" element={<GettingStartedPage />} />
+          <Route path="/contributing" element={<ContributingPage />} />
+          <Route path="/code-of-conduct" element={<CodeOfConductPage />} />
+          <Route path="/license" element={<LicensePage />} />
+          <Route path="/tech-stack" element={<TechStackPage />} />
+          <Route path="/documentation" element={<DocumentationPage />} />
+          <Route path="/issues" element={<IssuesPage />} />
+          <Route path="/feature-requests" element={<FeatureRequestsPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
