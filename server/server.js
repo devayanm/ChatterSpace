@@ -5,12 +5,18 @@ const http = require('http');
 const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
+const cors = require('cors'); // ⬅️ Import cors
 
-// ✅ Added CORS configuration for Socket.IO (keeping original structure)
-// ✅ Added CORS support for typing indicators
+// ✅ Middleware: Add CORS for Express routes. This is crucial for API calls.
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:4173'],
+  credentials: true,
+}));
+
+// ✅ CORS configuration for Socket.IO. We'll allow multiple ports.
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:4173'],
     methods: ["GET", "POST"]
   }
 });
@@ -81,33 +87,27 @@ app.post('/api/channels/:id/messages', (req, res) => {
 // Socket.io: Enhanced connection handling
 io.on('connection', (socket) => {
   console.log('⚡ User connected:', socket.id);
-
   // ✅ Join channel functionality
   socket.on('joinChannel', (channelId) => {
     socket.join(channelId);
     console.log(`👤 Socket ${socket.id} joined channel: ${channelId}`);
   });
-
   // ✅ Fixed: Correct event names matching frontend expectations
   socket.on('typing', ({ channelId, user }) => {
     console.log(`⌨️ ${user} is typing in ${channelId}`);
     socket.to(channelId).emit('user-typing', { channelId, user });
   });
-
   socket.on('stop-typing', ({ channelId, user }) => {
     console.log(`⌨️ ${user} stopped typing in ${channelId}`);
     socket.to(channelId).emit('user-stopped-typing', { channelId, user });
   });
-
   // ✅ Keep original typing indicator events (for backward compatibility)
   socket.on('typing-start', ({ channelId, user }) => {
     socket.to(channelId).emit('user-typing', { channelId, user });
   });
-
   socket.on('typing-stop', ({ channelId, user }) => {
     socket.to(channelId).emit('user-stopped-typing', { channelId, user });
   });
-
   socket.on('disconnect', () => {
     console.log('❌ User disconnected:', socket.id);
   });
