@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+
+// Existing routes
 router.post('/signup', authController.signupUser);
 router.post('/login', authController.loginUser);    
 router.get('/logout', authController.logoutUser);
@@ -10,5 +12,8 @@ router.get('/logout', authController.logoutUser);
 router.get("/user/:id",authController.getuserbyid);
 router.patch('/update/:id',authController.updateuser);
 router.delete("/delete/:id",authController.deleteuser);
+
+// ⬅️ Add this new route for forgot password
+router.post('/forgotpassword', authController.forgotPassword); 
 
 module.exports = router;
