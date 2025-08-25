@@ -1,82 +1,61 @@
-import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
-import AuthPage from "./pages/AuthPage";
-
-// ✅ Connect socket to backend
-const socket = io("http://localhost:5000"); // change to your backend URL
+import React, { useState } from "react";
+import Chatbot from "./components/chatbot";
+import Navbar from "./components/navbar";
+import About from "./components/about";
+import Footer from "./components/footer";
+import Testimonials from "./components/testimonilas";
+import Login from "./pages/login";
+import Signup from "./pages/signup";
 
 const App = () => {
-  // ✅ Added typing indicator state management
-  const [typingUsers, setTypingUsers] = useState(new Set());
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    // Debugging: connection log
-    socket.on("connect", () => {
-      console.log("✅ Connected to socket:", socket.id);
-    });
-
-    // Listen for typing events
-    socket.on("user-typing", ({ channelId, user }) => {
-      console.log(`${user} is typing in ${channelId}...`);
-      // ✅ Update typing users state
-      setTypingUsers(prev => new Set([...prev, user]));
-    });
-
-    socket.on("user-stopped-typing", ({ channelId, user }) => {
-      console.log(`${user} stopped typing in ${channelId}`);
-      // ✅ Remove user from typing state
-      setTypingUsers(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(user);
-        return newSet;
-      });
-    });
-
-    // ✅ Handle user authentication for typing indicators
-    socket.on("user-authenticated", ({ user }) => {
-      setCurrentUser(user);
-      console.log("User set for typing indicators:", user);
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("user-typing");
-      socket.off("user-stopped-typing");
-      socket.off("user-authenticated");
-    };
-  }, []);
-
-  // ✅ Helper functions for typing indicators
-  const emitTyping = (channelId = 'general') => {
-    if (currentUser && socket.connected) {
-      socket.emit("typing-start", { channelId, user: currentUser });
-    }
-  };
-
-  const emitStopTyping = (channelId = 'general') => {
-    if (currentUser && socket.connected) {
-      socket.emit("typing-stop", { channelId, user: currentUser });
-    }
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authPage, setAuthPage] = useState(null); // null, "login", "signup"
+  const [user] = useState(null); // Logged in user info (dummy for now)
 
   return (
-    <div>
-      {/* ✅ Connection indicator for debugging */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-2 right-2 z-50 bg-black/50 text-white p-2 rounded text-xs">
-          Socket: {socket.connected ? '🟢 Connected' : '🔴 Disconnected'}
-          {typingUsers.size > 0 && (
-            <div>Typing: {Array.from(typingUsers).join(', ')}</div>
-          )}
-        </div>
-      )}
-
-      {/* Later you can conditionally render ChatPage after login */}
-      <AuthPage 
-        socket={socket} 
-        typingUtils={{ emitTyping, emitStopTyping, typingUsers, setCurrentUser }} 
+    <div className="bg-gray-100 min-h-screen flex flex-col">
+      {/* Navbar */}
+      <Navbar
+        onLoginClick={() => setAuthPage("login")}
+        onSignupClick={() => setAuthPage("signup")}
+        isAuthenticated={isAuthenticated}
+        onLogout={() => setIsAuthenticated(false)}
       />
+
+      {/* Main Content */}
+      <div className="flex-1">
+        {!isAuthenticated ? (
+          <div className="w-full">
+            {authPage === "login" && (
+              <div className="flex justify-center mt-8">
+                <Login />
+              </div>
+            )}
+
+            {authPage === "signup" && (
+              <div className="flex justify-center mt-8">
+                <Signup />
+              </div>
+            )}
+
+            {!authPage && (
+              <>
+                <About />
+                <Testimonials />
+                <Footer />
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center w-full p-6">
+            <h1 className="text-3xl font-bold mb-4">Welcome Back 🚀</h1>
+            <p className="text-gray-700">Hello, {user?.name || "User"}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Chatbot always visible */}
+      <Chatbot />
     </div>
   );
 };
