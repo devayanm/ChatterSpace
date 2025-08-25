@@ -10,7 +10,7 @@ const server = http.createServer(app);
 // ✅ Added CORS support for typing indicators
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [process.env.CLIENT_URL, "http://localhost:5173", "http://localhost:3000"],
     methods: ["GET", "POST"]
   }
 });
