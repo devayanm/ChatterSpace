@@ -9,6 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 const AuthPage = ({ socket, typingUtils }) => {
   const navigate = useNavigate();
@@ -22,35 +23,18 @@ const AuthPage = ({ socket, typingUtils }) => {
     displayName: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [demoMessage, setDemoMessage] = useState("");
   const [typingTimeout, setTypingTimeout] = useState(null);
-
-  // ✅ Unified error state (used for both auth & forgot password)
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleInputChange = (e) => {
-    setErrorMessage(""); // clear error on input change
+    setErrorMessage("");
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleDemoMessageChange = (e) => {
-    setDemoMessage(e.target.value);
-    if (typingUtils && socket && socket.connected) {
-      typingUtils.emitTyping("general");
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
-      const timeout = setTimeout(() => {
-        typingUtils.emitStopTyping("general");
-      }, 1000);
-      setTypingTimeout(timeout);
-    }
-  };
-
-  // ✅ Forgot Password Handler
+  // Forgot Password Submit Handler
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -66,25 +50,24 @@ const AuthPage = ({ socket, typingUtils }) => {
       );
       const data = await response.json();
       if (response.ok) {
-        setErrorMessage(data.message); // success message
+        setErrorMessage(data.message);
         setIsForgotPassword(false);
       } else {
         setErrorMessage(data.message || "Failed to send reset link.");
       }
     } catch (err) {
       setErrorMessage(
-        "Could not connect to the server. Please check your connection."
+        "Could not connect to the server. Please check your network."
       );
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ✅ Login/Signup Handler
+  // Main Auth Submit Handler (Login/Signup)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
     if (isLogin) {
       if (!formData.email || !formData.password) {
         setErrorMessage("Email and password are required.");
@@ -116,20 +99,17 @@ const AuthPage = ({ socket, typingUtils }) => {
             email: formData.email,
             password: formData.password,
           };
-
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
         credentials: "include",
       });
-
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Authentication failed.");
       }
 
-      // ✅ Backend success - setup socket
       if (socket && socket.connected) {
         const userName =
           data.user?.name ||
@@ -143,7 +123,6 @@ const AuthPage = ({ socket, typingUtils }) => {
         if (typingUtils) typingUtils.setCurrentUser(userName);
       }
 
-      // ✅ Redirect after login
       if (isLogin) {
         navigate("/chat");
       } else {
@@ -180,10 +159,16 @@ const AuthPage = ({ socket, typingUtils }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* ... Background Gradient Blobs ... */}
-      <div className="relative z-10 min-h-screen flex">
-        {/* LEFT SIDE: Features */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
+      {/* Animated background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+      </div>
+      {/* Content */}
+      <div className="relative z-10 flex-1 flex">
+        {/* Left Panel */}
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-center p-12">
           <div className="max-w-md">
             <div className="flex items-center space-x-3 mb-8">
@@ -223,12 +208,11 @@ const AuthPage = ({ socket, typingUtils }) => {
             </div>
           </div>
         </div>
-
-        {/* RIGHT SIDE: Auth Card */}
+        {/* Right Panel - Auth */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
           <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20">
-            
-            {/* Error Box */}
+
+            {/* Error message */}
             {errorMessage && (
               <div className="mb-6 p-4 rounded-xl border border-red-500 bg-red-900/40 flex items-center justify-between">
                 <div className="flex items-center">
@@ -269,25 +253,27 @@ const AuthPage = ({ socket, typingUtils }) => {
                 </div>
               </form>
             ) : (
-              // ✅ Main Sign In / Sign Up Form
               <form onSubmit={handleSubmit}>
                 <div className="flex bg-white/10 rounded-xl p-1 mb-8">
                   <button
                     type="button"
                     onClick={() => setIsLogin(true)}
-                    className={`flex-1 py-2 ${isLogin ? "bg-white text-black" : "text-white"}`}
+                    className={`flex-1 py-2 ${
+                      isLogin ? "bg-white text-black" : "text-white"
+                    }`}
                   >
                     Sign In
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsLogin(false)}
-                    className={`flex-1 py-2 ${!isLogin ? "bg-white text-black" : "text-white"}`}
+                    className={`flex-1 py-2 ${
+                      !isLogin ? "bg-white text-black" : "text-white"
+                    }`}
                   >
                     Sign Up
                   </button>
                 </div>
-
                 <div className="space-y-6">
                   {!isLogin && (
                     <>
@@ -334,12 +320,12 @@ const AuthPage = ({ socket, typingUtils }) => {
                       type="button"
                       className="absolute right-3 top-3 text-gray-400 hover:text-white"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <EyeOff /> : <Eye />}
                     </button>
                   </div>
                 </div>
-
                 {isLogin && (
                   <div className="flex justify-between items-center mt-3">
                     <label className="flex items-center text-sm text-gray-300">
@@ -354,10 +340,9 @@ const AuthPage = ({ socket, typingUtils }) => {
                     </button>
                   </div>
                 )}
-
                 <button
-                  type="submit"
                   disabled={isLoading}
+                  type="submit"
                   className="w-full mt-6 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-xl"
                 >
                   {isLoading
@@ -373,6 +358,7 @@ const AuthPage = ({ socket, typingUtils }) => {
           </div>
         </div>
       </div>
+      <Footer variant="auth" />
     </div>
   );
 };
