@@ -1,62 +1,108 @@
-import React, { useState } from "react";
-import Chatbot from "./components/chatbot";
-import Navbar from "./components/navbar";
-import About from "./components/about";
-import Footer from "./components/footer";
-import Testimonials from "./components/testimonilas";
-import Login from "./pages/login";
-import Signup from "./pages/signup";
+import React, { useEffect, useState } from "react";
+import io from "socket.io-client";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
+import Navbar from "./components/Navbar";
+
+import AuthPage from "./pages/AuthPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import GettingStartedPage from "./pages/GettingStartedPage";
+import ContributingPage from "./pages/ContributingPage";
+import CodeOfConductPage from "./pages/CodeOfConductPage";
+import LicensePage from "./pages/LicensePage";
+import TechStackPage from "./pages/TechStackPage";
+import DocumentationPage from "./pages/DocumentationPage";
+import IssuesPage from "./pages/IssuesPage";
+import FeatureRequestsPage from "./pages/FeatureRequestsPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
+
+// Socket connection (change URL as needed)
+const socket = io("http://localhost:5000");
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authPage, setAuthPage] = useState(null); // null, "login", "signup"
-  const [user] = useState(null); // Logged in user info (dummy for now)
+  const [typingUsers, setTypingUsers] = useState(new Set());
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("✅ Connected to socket:", socket.id);
+    });
+
+    socket.on("user-typing", ({ channelId, user }) => {
+      setTypingUsers((prev) => new Set([...prev, user]));
+    });
+
+    socket.on("user-stopped-typing", ({ channelId, user }) => {
+      setTypingUsers((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(user);
+        return newSet;
+      });
+    });
+
+    socket.on("user-authenticated", ({ user }) => {
+      setCurrentUser(user);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("user-typing");
+      socket.off("user-stopped-typing");
+      socket.off("user-authenticated");
+    };
+  }, []);
+
+  const emitTyping = (channelId = "general") => {
+    if (currentUser && socket.connected) {
+      socket.emit("typing-start", { channelId, user: currentUser });
+    }
+  };
+
+  const emitStopTyping = (channelId = "general") => {
+    if (currentUser && socket.connected) {
+      socket.emit("typing-stop", { channelId, user: currentUser });
+    }
+  };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
-      {/* Navbar */}
-      <Navbar
-        onLoginClick={() => setAuthPage("login")}
-        onSignupClick={() => setAuthPage("signup")}
-        isAuthenticated={isAuthenticated}
-        onLogout={() => setIsAuthenticated(false)}
-      />
+    <Router>
+      <ScrollToTop />
+      <Navbar />
 
-      {/* Main Content */}
-      <div className="flex-1">
-        {!isAuthenticated ? (
-          <div className="w-full">
-            {authPage === "login" && (
-              <div className="flex justify-center mt-8">
-                <Login />
-              </div>
-            )}
+      {/* Development-only Typing Indicator Overlay */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="fixed top-2 right-2 z-50 bg-black/50 text-white p-2 rounded text-xs">
+          Socket: {socket.connected ? "🟢 Connected" : "🔴 Disconnected"}
+          {typingUsers.size > 0 && (
+            <div>Typing: {Array.from(typingUsers).join(", ")}</div>
+          )}
+        </div>
+      )}
 
-            {authPage === "signup" && (
-              <div className="flex justify-center mt-8">
-                <Signup />
-              </div>
-            )}
-
-            {!authPage && (
-              <>
-                <About />
-                <Testimonials />
-                <Footer />
-              </>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center w-full p-6">
-            <h1 className="text-3xl font-bold mb-4">Welcome Back 🚀</h1>
-            <p className="text-gray-700">Hello, {user?.name || "User"}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Chatbot always visible */}
-      <Chatbot />
-    </div>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <AuthPage
+              socket={socket}
+              typingUtils={{ emitTyping, emitStopTyping, typingUsers, setCurrentUser }}
+            />
+          }
+        />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/getting-started" element={<GettingStartedPage />} />
+        <Route path="/contributing" element={<ContributingPage />} />
+        <Route path="/code-of-conduct" element={<CodeOfConductPage />} />
+        <Route path="/license" element={<LicensePage />} />
+        <Route path="/tech-stack" element={<TechStackPage />} />
+        <Route path="/documentation" element={<DocumentationPage />} />
+        <Route path="/issues" element={<IssuesPage />} />
+        <Route path="/feature-requests" element={<FeatureRequestsPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsOfServicePage />} />
+      </Routes>
+    </Router>
   );
 };
 
