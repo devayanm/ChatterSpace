@@ -3,11 +3,23 @@ require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const cors = require('cors');           // 👈 import cors
+const cookieParser = require('cookie-parser');
+
 const app = express();
 const server = http.createServer(app);
 
-// ✅ Added CORS configuration for Socket.IO (keeping original structure)
-// ✅ Added CORS support for typing indicators
+// ✅ Apply middleware
+app.use(express.json());
+app.use(cookieParser());
+
+// ✅ CORS for REST API (important!)
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
+
+// ✅ Socket.IO CORS config
 const io = new Server(server, {
   cors: {
     origin: process.env.FRONTEND_URL,
@@ -116,6 +128,7 @@ io.on('connection', (socket) => {
 // Authentication routes
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
