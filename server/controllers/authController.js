@@ -243,7 +243,7 @@ const resetPassword = async (req, res) => {
         resetPasswordExpire: { $gt: Date.now() }, 
     });
 
-    if (!user) return res.status(400).json({ message: "Invalid or expired token" });
+    if (!user) return res.status(400).json({ success:false ,message: "Invalid or expired token" });
 
      // Update password
     user.password = password;
@@ -256,7 +256,7 @@ const resetPassword = async (req, res) => {
             "Password Reset confirmation - ChatterSpace",
             "Password reset successfully"
         ) 
-    return res.status(200).json({ message: "Password reset successful" });
+    return res.status(200).json({ success:true, message: "Password reset successful" });
     
 
 
