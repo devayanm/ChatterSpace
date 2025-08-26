@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 // Function to generate and send JWT token
 const sendToken = (user, res) => {
@@ -12,7 +13,7 @@ const sendToken = (user, res) => {
         secure: process.env.NODE_ENV === 'production', 
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    });
 
     res.status(200).json({
     success: true,
@@ -23,7 +24,7 @@ const sendToken = (user, res) => {
       email: user.email,
     },
   });
-}
+};
 
 // @desc Sign up 
 // @route POST /api/auth/signup
@@ -130,49 +131,49 @@ const logoutUser = async (req, res) => {
 // by Samay2006
 // @desc Update user details (name, username, email)
 // @route   PATCH /update/:id
-const updateuser=async(req,res)=>{
+const updateuser = async(req,res) => {
 try {
-    const  {uname,uusername,uemail}=req.body;
-    const {id}=req.params;
-if(!(uname ||uusername||uemail)){
-    return res.status(400).json({success:false,message:"fill at least one of them!"})
-}
+    const  {uname, uusername, uemail} = req.body;
+    const {id} = req.params;
+    if(!(uname || uusername || uemail)){
+        return res.status(400).json({success:false, message:"fill at least one of them!"});
+    }
 
-// Updating only the values that are provided
-const updateFields = {};
-if (uemail) updateFields.email = uemail;
-if (uname) updateFields.name = uname;
-if (uusername) updateFields.username = uusername;
+    // Updating only the values that are provided
+    const updateFields = {};
+    if (uemail) updateFields.email = uemail;
+    if (uname) updateFields.name = uname;
+    if (uusername) updateFields.username = uusername;
 
-const user = await User.findByIdAndUpdate(
-    id,
-    { $set: updateFields },
-    { new: true }
-).select("-password");
+    const user = await User.findByIdAndUpdate(
+        id,
+        { $set: updateFields },
+        { new: true }
+    ).select("-password");
 
-// if user not found
-if(!user){
-    return res.status(404).json({success:false,message:"User not found!"})
-}
-res.status(200).json({success:true,message:"Details updated successfully", data:user})
+    // if user not found
+    if(!user){
+        return res.status(404).json({success:false, message:"User not found!"});
+    }
+    res.status(200).json({success:true, message:"Details updated successfully", data:user});
 
 
 } catch (error) {
-  return  res.status(500).json({success:false,message:error.message})
+  return  res.status(500).json({success:false, message:error.message});
 
 }
-}
+};
 // by Samay2006
 // @desc    Get user details by ID
 // @route   GET /user/:id
-const getuserbyid=async(req,res)=>{
+const getuserbyid = async(req, res) => {
     try {
-        const {id}=req.params;
-        const user=await User.findById(id).select("-password");
+        const {id} = req.params;
+        const user = await User.findById(id).select("-password");
         if(!user){
-        return res.status(404).json({success:false,message:"User not found!"})
-}
-res.status(200).json({success:true,message:"User details fetched successfully", data:user})
+        return res.status(404).json({success:false, message:"User not found!"});
+    }
+    res.status(200).json({success:true, message:"User details fetched successfully", data:user});
 
     } catch (error) {
         return res.status(500).json({
@@ -181,20 +182,20 @@ res.status(200).json({success:true,message:"User details fetched successfully", 
 
         });
     }
-}
+};
 // by Samay2006
 // @desc Delete user
 // @route DELETE /user/:id
-const deleteuser=async (req,res) => {
+const deleteuser = async (req, res) => {
 try {
-    const {id}=req.params;
-    const user=await User.findByIdAndDelete(id)
+    const {id} = req.params;
+    const user = await User.findByIdAndDelete(id);
     
     if(!user){
         return res.status(404).json({
     success:false,
     message:"User not found!"
-    })
+    });
     }
     
     res.status(200).json({
@@ -206,10 +207,62 @@ try {
          return res.status(500).json({
             success:false,
             message:error.message,
-})
+});
 }
-    
-}
+};
+
+// ⬅️ Updated forgotPassword function
+// @desc Request password reset link
+// @route POST /api/auth/forgotpassword
+// @access public
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            // Security best practice: return a generic success message even if the user is not found.
+            return res.status(200).json({
+                success: true,
+                message: 'If a user with that email exists, a password reset link has been sent.'
+            });
+        }
+
+        const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        
+        // ⬅️ Use the most robust Nodemailer setup for Gmail
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false, // TLS is used, so secure is false
+          requireTLS: true, // This enables STARTTLS
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+
+        const mailOptions = {
+          to: user.email,
+          from: process.env.EMAIL_USER,
+          subject: 'Password Reset',
+          html: `<p>You requested a password reset. Click this link to reset your password:</p><p><a href="http://localhost:5173/resetpassword/${resetToken}">Reset Password Link</a></p>`,
+        };
+
+        await transporter.sendMail(mailOptions);
+        
+        console.log(`Password reset email sent to: ${email}`);
+
+        res.status(200).json({
+            success: true,
+            message: 'If a user with that email exists, a password reset link has been sent.'
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error while sending email.' });
+    }
+};
 
 
 module.exports = {
@@ -219,4 +272,5 @@ module.exports = {
     updateuser,
     getuserbyid,
     deleteuser,
-}
+    forgotPassword,
+};
