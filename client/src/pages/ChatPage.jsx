@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import Footer from '../components/Footer';
-import { 
-  Hash, 
-  Send, 
-  Smile, 
-  Paperclip, 
-  Settings, 
+import React, { useState } from "react";
+import {
+  Hash,
+  Send,
+  Smile,
+  Paperclip,
+  Settings,
   Bell,
   Search,
   MoreVertical,
@@ -13,45 +12,52 @@ import {
   MessageCircle,
   Plus,
   Menu,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
+import Footer from "../components/Footer";
 
 const ChatPage = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const channels = [
-    { id: 1, name: 'general', unread: 0, active: true },
-    { id: 2, name: 'development', unread: 3, active: false },
-    { id: 3, name: 'design', unread: 0, active: false },
-    { id: 4, name: 'random', unread: 1, active: false },
+    { id: 1, name: "general", unread: 0, active: true },
+    { id: 2, name: "development", unread: 3, active: false },
+    { id: 3, name: "design", unread: 0, active: false },
+    { id: 4, name: "random", unread: 1, active: false },
   ];
 
   const messages = [
     {
       id: 1,
-      user: 'Alice Johnson',
-      avatar: '👩‍💻',
-      content: 'Hey everyone! Just pushed the new footer component. What do you think?',
-      timestamp: '2:34 PM',
-      reactions: [{ emoji: '👍', count: 3 }, { emoji: '🔥', count: 1 }]
+      user: "Alice Johnson",
+      avatar: "👩‍💻",
+      content:
+        "Hey everyone! Just pushed the new footer component. What do you think?",
+      timestamp: "2:34 PM",
+      reactions: [
+        { emoji: "👍", count: 3 },
+        { emoji: "🔥", count: 1 },
+      ],
     },
     {
       id: 2,
-      user: 'Bob Smith',
-      avatar: '👨‍🎨',
-      content: 'Looks amazing! The responsive design works perfectly across all screen sizes.',
-      timestamp: '2:35 PM',
-      reactions: [{ emoji: '✅', count: 2 }]
+      user: "Bob Smith",
+      avatar: "👨‍🎨",
+      content:
+        "Looks amazing! The responsive design works perfectly across all screen sizes.",
+      timestamp: "2:35 PM",
+      reactions: [{ emoji: "✅", count: 2 }],
     },
     {
       id: 3,
-      user: 'Charlie Davis',
-      avatar: '👨‍💼',
-      content: 'I love the social media integration and the newsletter signup. Great attention to detail!',
-      timestamp: '2:37 PM',
-      reactions: []
-    }
+      user: "Charlie Davis",
+      avatar: "👨‍💼",
+      content:
+        "I love the social media integration and the newsletter signup. Great attention to detail!",
+      timestamp: "2:37 PM",
+      reactions: [],
+    },
   ];
 
   return (
@@ -59,19 +65,17 @@ const ChatPage = () => {
       {/* Header */}
       <header className="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <button 
+          <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors"
           >
             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          
           <div className="flex items-center space-x-3">
             <Hash className="w-5 h-5 text-slate-400" />
             <span className="text-white font-semibold">general</span>
           </div>
         </div>
-
         <div className="flex items-center space-x-4">
           <button className="p-2 text-slate-400 hover:text-white transition-colors">
             <Bell className="w-5 h-5" />
@@ -87,10 +91,11 @@ const ChatPage = () => {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
-        <aside className={`
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0 fixed lg:relative z-30 w-64 bg-slate-800 border-r border-slate-700 transition-transform duration-200 ease-in-out
-        `}>
+        <aside
+          className={`${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 fixed lg:relative z-30 w-64 bg-slate-800 border-r border-slate-700 transition-transform duration-200 ease-in-out`}
+        >
           <div className="p-4">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
@@ -98,20 +103,20 @@ const ChatPage = () => {
               </div>
               <span className="text-white font-bold">ChatterSpace</span>
             </div>
-
             <div className="space-y-1">
               <div className="flex items-center justify-between text-slate-400 text-sm font-medium px-2 py-1">
                 <span>CHANNELS</span>
                 <Plus className="w-4 h-4 cursor-pointer hover:text-white" />
               </div>
-              
-              {channels.map(channel => (
+
+              {channels.map((channel) => (
                 <div
                   key={channel.id}
-                  className={`
-                    flex items-center justify-between px-2 py-1.5 rounded cursor-pointer transition-colors
-                    ${channel.active ? 'bg-slate-700 text-white' : 'text-slate-400 hover:bg-slate-700 hover:text-white'}
-                  `}
+                  className={`flex items-center justify-between px-2 py-1.5 rounded cursor-pointer transition-colors ${
+                    channel.active
+                      ? "bg-slate-700 text-white"
+                      : "text-slate-400 hover:bg-slate-700 hover:text-white"
+                  }`}
                 >
                   <div className="flex items-center space-x-2">
                     <Hash className="w-4 h-4" />
@@ -125,21 +130,25 @@ const ChatPage = () => {
                 </div>
               ))}
             </div>
-
             <div className="mt-6">
               <div className="flex items-center justify-between text-slate-400 text-sm font-medium px-2 py-1">
                 <span>ONLINE</span>
                 <span className="text-xs">3</span>
               </div>
               <div className="space-y-2 mt-2">
-                {['Alice Johnson', 'Bob Smith', 'Charlie Davis'].map((user, index) => (
-                  <div key={index} className="flex items-center space-x-2 px-2 py-1 text-slate-400 hover:text-white cursor-pointer">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs">
-                      {['👩‍💻', '👨‍🎨', '👨‍💼'][index]}
+                {["Alice Johnson", "Bob Smith", "Charlie Davis"].map(
+                  (user, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-2 px-2 py-1 text-slate-400 hover:text-white cursor-pointer"
+                    >
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs">
+                        {["👩‍💻", "👨‍🎨", "👨‍💼"][index]}
+                      </div>
+                      <span className="text-sm">{user}</span>
                     </div>
-                    <span className="text-sm">{user}</span>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -147,7 +156,7 @@ const ChatPage = () => {
 
         {/* Overlay for mobile */}
         {sidebarOpen && (
-          <div 
+          <div
             className="lg:hidden fixed inset-0 bg-black/50 z-20"
             onClick={() => setSidebarOpen(false)}
           />
@@ -157,8 +166,11 @@ const ChatPage = () => {
         <main className="flex-1 flex flex-col">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map(message => (
-              <div key={message.id} className="flex space-x-3 group hover:bg-slate-800/50 p-2 rounded">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className="flex space-x-3 group hover:bg-slate-800/50 p-2 rounded"
+              >
                 <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center text-lg">
                   {message.avatar}
                 </div>
@@ -188,7 +200,6 @@ const ChatPage = () => {
               </div>
             ))}
           </div>
-
           {/* Message Input */}
           <div className="p-4 border-t border-slate-700">
             <div className="flex items-center space-x-3 bg-slate-700 rounded-lg px-4 py-3">
@@ -202,20 +213,20 @@ const ChatPage = () => {
                 placeholder="Message #general"
                 className="flex-1 bg-transparent text-white placeholder-slate-400 focus:outline-none"
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter' && message.trim()) {
-                    // Handle send message
-                    setMessage('');
+                  if (e.key === "Enter" && message.trim()) {
+                    // Handle send message logic here
+                    setMessage("");
                   }
                 }}
               />
               <button className="text-slate-400 hover:text-white transition-colors">
                 <Smile className="w-5 h-5" />
               </button>
-              <button 
+              <button
                 className={`p-2 rounded transition-colors ${
-                  message.trim() 
-                    ? 'bg-purple-500 text-white hover:bg-purple-600' 
-                    : 'text-slate-400'
+                  message.trim()
+                    ? "bg-purple-500 text-white hover:bg-purple-600"
+                    : "text-slate-400"
                 }`}
                 disabled={!message.trim()}
               >
@@ -233,10 +244,19 @@ const ChatPage = () => {
               Members — 12
             </h3>
             <div className="space-y-2">
-              {['Alice Johnson', 'Bob Smith', 'Charlie Davis', 'Diana Prince', 'Eve Wilson'].map((user, index) => (
-                <div key={index} className="flex items-center space-x-2 px-2 py-1 rounded hover:bg-slate-700 cursor-pointer">
+              {[
+                "Alice Johnson",
+                "Bob Smith",
+                "Charlie Davis",
+                "Diana Prince",
+                "Eve Wilson",
+              ].map((user, index) => (
+                <div
+                  key={index}
+                  className="flex items-center space-x-2 px-2 py-1 rounded hover:bg-slate-700 cursor-pointer"
+                >
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs">
-                    {['👩‍💻', '👨‍🎨', '👨‍💼', '👩‍🔬', '👩‍🎤'][index]}
+                    {["👩‍💻", "👨‍🎨", "👨‍💼", "👩‍🔬", "👩‍🎤"][index]}
                   </div>
                   <span className="text-sm text-slate-300">{user}</span>
                 </div>
@@ -246,7 +266,7 @@ const ChatPage = () => {
         </aside>
       </div>
 
-      {/* Footer with chat variant */}
+      {/* Footer */}
       <Footer variant="chat" />
     </div>
   );
