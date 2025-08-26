@@ -1,5 +1,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const crypto=require("crypto");
+const {sendMail}=require("../config/emailConfig");
+const { route } = require('../routes/authRoutes');
 
 // Function to generate and send JWT token
 const sendToken = (user, res) => {
@@ -54,6 +57,7 @@ const signupUser = async (req, res) => {
         });
 
         sendToken(user, res);
+        
 
     }catch(err){
         console.error(err);
@@ -190,6 +194,81 @@ try {
     
 }
 
+// by vivek724464
+// @desc forgot password
+// @routr /forgot-password
+
+const forgotPassword=async(req,res)=>{
+    try{
+        const {email}=req.body;
+        const user=await User.findOne({email:email});
+        if (!user) return res.status(404).json({ success:false, message: "User not found" });
+
+          //Generate reset token
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; 
+        await user.save();
+
+          // Reset URL
+        const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+        await sendMail(
+            email,
+            "Password Reset - ChatterSpace",
+            `Click here to reset your password: ${resetUrl}`
+        ) 
+         return res.status(200).json({
+            success: true,
+            message: "Password reset link sent to your email"
+        });
+    }catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message,
+         })
+    }
+}
+
+// by vivek724464
+// @desc reset password
+// @routr /reset-password/:token
+
+const resetPassword = async (req, res) => {
+    try{
+        const {token}=req.params;
+        const {password}=req.body;
+
+        const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpire: { $gt: Date.now() }, 
+    });
+
+    if (!user) return res.status(400).json({ message: "Invalid or expired token" });
+
+     // Update password
+    user.password = password;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpire = null;
+
+    await user.save();
+    await sendMail(
+            user.email,
+            "Password Reset confirmation - ChatterSpace",
+            "Password reset successfully"
+        ) 
+    return res.status(200).json({ message: "Password reset successful" });
+    
+
+
+    }catch (error){
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+
 
 module.exports = {
     signupUser,
@@ -198,4 +277,6 @@ module.exports = {
     updateuser,
     getuserbyid,
     deleteuser,
+    forgotPassword,
+    resetPassword
 }
