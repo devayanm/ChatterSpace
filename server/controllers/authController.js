@@ -90,10 +90,31 @@ const loginUser = async (req, res) => {
         }
 
         sendToken(user, res);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
+  } catch (err) {
+  console.error("❌ Signup error:", err);
+
+  // Handle duplicate key errors (username or email already exists)
+  if (err.code === 11000) {
+    const field = Object.keys(err.keyValue)[0];
+    return res.status(400).json({
+      success: false,
+      message: `${field} already exists`
+    });
+  }
+
+  // Handle validation errors
+  if (err.name === "ValidationError") {
+    const messages = Object.values(err.errors).map(val => val.message);
+    return res.status(400).json({
+      success: false,
+      message: messages.join(", ")
+    });
+  }
+
+  // Default: unknown server error
+  res.status(500).json({ success: false, message: "Internal server error" });
+}
+
 };
 
 
