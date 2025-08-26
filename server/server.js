@@ -15,7 +15,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// Middleware: Dynamic CORS headers for Express
+// Middleware: Dynamic CORS headers for Express REST API
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -67,6 +67,7 @@ app.post('/api/channels', (req, res) => {
   if (trimmed.length === 0) {
     return res.status(400).json({ error: 'Channel name cannot be empty or whitespace' });
   }
+  // Slugify function to generate channel id
   const slugify = (s) =>
     s
       .toLowerCase()
