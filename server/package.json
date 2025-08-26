@@ -29,6 +29,7 @@
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.1",
+    "nodemailer": "^7.0.5",
     "socket.io": "^4.8.1"
   }
 }
