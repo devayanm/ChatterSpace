@@ -49,48 +49,82 @@ const AuthPage = ({ socket, typingUtils }) => {  // ✅ Accept socket prop + typ
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-    // ✅ Updated validation logic for both login and signup
-    if (isLogin) {
-      if (!formData.email || !formData.password) {
-        setErrorMessage('Email and password are required.');
-        setIsLoading(false);
-        return;
-      }
-    } else { // Signup
-      if (!formData.email || !formData.password || !formData.username || !formData.displayName) {
-        setErrorMessage('All fields are required to create an account.');
-        setIsLoading(false);
-        return;
+  // ✅ Basic validations
+  if (isLogin) {
+    if (!formData.email || !formData.password) {
+      setErrorMessage('Email and password are required.');
+      setIsLoading(false);
+      return;
+    }
+  } else {
+    if (!formData.email || !formData.password || !formData.username || !formData.displayName) {
+      setErrorMessage('All fields are required to create an account.');
+      setIsLoading(false);
+      return;
+    }
+  }
+
+  try {
+    const endpoint = isLogin 
+      ? "http://localhost:5000/api/auth/login" 
+      : "http://localhost:5000/api/auth/signup";
+
+    const body = isLogin
+      ? { identifier: formData.email, password: formData.password } // login expects identifier
+      : { 
+          name: formData.displayName,
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        };
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      credentials: "include"  // allow cookies
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Something went wrong");
+    }
+
+    console.log("✅ Auth success:", data);
+
+    // ✅ Socket setup
+    if (socket && socket.connected) {
+      const userName = data.user?.name || formData.displayName || formData.username || formData.email;
+      socket.emit("user-authenticated", {
+        user: userName,
+        timestamp: new Date().toISOString()
+      });
+
+      if (typingUtils) {
+        typingUtils.setCurrentUser(userName);
       }
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log(isLogin ? 'Login attempt:' : 'Signup attempt:', formData);
-      setIsLoading(false);
+    // ✅ Redirect logic
+    if (isLogin) {
+      window.location.href = "/chat";   // redirect after login
+    } else {
+      setIsLogin(true);                 // switch to login after signup
+    }
 
-      // ✅ After successful login, setup user for typing indicators
-      if (socket && socket.connected) {
-        const userName = formData.displayName || formData.username || formData.email;
-        socket.emit('user-authenticated', {
-          user: userName,
-          timestamp: new Date().toISOString()
-        });
+  } catch (err) {
+    console.error("❌ Auth error:", err);
+    setErrorMessage(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-        // ✅ Set current user for typing indicators
-        if (typingUtils) {
-          typingUtils.setCurrentUser(userName);
-        }
-      }
 
-      // Here you would make actual API calls to your backend
-      // and then redirect to chat interface where typing indicators will work
-    }, 1500);
-  };
 
   const features = [
     {
