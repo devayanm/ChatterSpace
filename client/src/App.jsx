@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
+import Navbar from "./components/Navbar";
 
 import AuthPage from "./pages/AuthPage";
 import FeaturesPage from "./pages/FeaturesPage";
@@ -15,9 +16,8 @@ import IssuesPage from "./pages/IssuesPage";
 import FeatureRequestsPage from "./pages/FeatureRequestsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
-import Navbar from "./components/Navbar";
 
-// Create socket connection once (change URL for production)
+// Socket connection (change URL as needed)
 const socket = io("http://localhost:5000");
 
 const App = () => {
@@ -69,7 +69,8 @@ const App = () => {
     <Router>
       <ScrollToTop />
       <Navbar />
-      {/* Typing indicator overlay, visible in dev mode */}
+
+      {/* Development-only Typing Indicator Overlay */}
       {process.env.NODE_ENV === "development" && (
         <div className="fixed top-2 right-2 z-50 bg-black/50 text-white p-2 rounded text-xs">
           Socket: {socket.connected ? "🟢 Connected" : "🔴 Disconnected"}
