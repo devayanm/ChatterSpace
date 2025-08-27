@@ -267,7 +267,7 @@ const ChatPage = () => {
       </div>
 
       {/* Footer */}
-      <Footer variant="chat" />
+      {/* <Footer variant="chat" /> */}
     </div>
   );
 };
