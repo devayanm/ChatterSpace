@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 export default function AboutPage() {
   const headingText = "ChatterSpace";
 
-  // Animation variants for each letter
   const letterVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
