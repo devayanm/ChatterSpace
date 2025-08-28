@@ -17,6 +17,7 @@ import FeatureRequestsPage from "./pages/FeatureRequestsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import ChatPage from "./pages/ChatPage";
+import AboutPage from "./pages/AboutPage";
 
 // Socket connection (change URL as needed)
 const socket = io("http://localhost:5000");
@@ -103,6 +104,7 @@ const App = () => {
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
         <Route path="/chat" element={<ChatPage socket={socket} />} />
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
     </Router>
   );
