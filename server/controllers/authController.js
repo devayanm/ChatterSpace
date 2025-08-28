@@ -1,5 +1,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const crypto=require("crypto");
+const {sendMail}=require("../config/emailConfig");
+const { route } = require('../routes/authRoutes');
 const nodemailer = require('nodemailer');
 
 // Function to generate and send JWT token
@@ -55,6 +58,7 @@ const signupUser = async (req, res) => {
         });
 
         sendToken(user, res);
+        
 
     }catch(err){
         console.error(err);
@@ -210,59 +214,79 @@ try {
 });
 }
 };
+// by vivek724464
+// @desc forgot password
+// @routr /forgot-password
 
-// ⬅️ Updated forgotPassword function
-// @desc Request password reset link
-// @route POST /api/auth/forgotpassword
-// @access public
-const forgotPassword = async (req, res) => {
-    try {
-        const { email } = req.body;
-        const user = await User.findOne({ email });
+const forgotPassword=async(req,res)=>{
+    try{
+        const {email}=req.body;
+        const user=await User.findOne({email:email});
+        if (!user) return res.status(404).json({ success:false, message: "User not found" });
+          //Generate reset token
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; 
+        await user.save();
 
-        if (!user) {
-            // Security best practice: return a generic success message even if the user is not found.
-            return res.status(200).json({
-                success: true,
-                message: 'If a user with that email exists, a password reset link has been sent.'
-            });
-        }
-
-        const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        
-        // ⬅️ Use the most robust Nodemailer setup for Gmail
-        const transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 587,
-          secure: false, // TLS is used, so secure is false
-          requireTLS: true, // This enables STARTTLS
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        });
-
-        const mailOptions = {
-          to: user.email,
-          from: process.env.EMAIL_USER,
-          subject: 'Password Reset',
-          html: `<p>You requested a password reset. Click this link to reset your password:</p><p><a href="http://localhost:5173/resetpassword/${resetToken}">Reset Password Link</a></p>`,
-        };
-
-        await transporter.sendMail(mailOptions);
-        
-        console.log(`Password reset email sent to: ${email}`);
-
-        res.status(200).json({
+          // Reset URL
+        const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+        await sendMail(
+            email,
+            "Password Reset - ChatterSpace",
+            `Click here to reset your password: ${resetUrl}`
+        ) 
+         return res.status(200).json({
             success: true,
-            message: 'If a user with that email exists, a password reset link has been sent.'
+            message: "Password reset link sent to your email"
         });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server error while sending email.' });
+    }catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message,
+         })
     }
-};
+}
+
+// by vivek724464
+// @desc reset password
+// @routr /reset-password/:token
+
+const resetPassword = async (req, res) => {
+    try{
+        const {token}=req.params;
+        const {password}=req.body;
+
+        const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpire: { $gt: Date.now() }, 
+    });
+
+    if (!user) return res.status(400).json({ success:false ,message: "Invalid or expired token" });
+
+     // Update password
+    user.password = password;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpire = null;
+
+    await user.save();
+    await sendMail(
+            user.email,
+            "Password Reset confirmation - ChatterSpace",
+            "Password reset successfully"
+        ) 
+    return res.status(200).json({ success:true, message: "Password reset successful" });
+    
+
+
+    }catch (error){
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
 
 
 module.exports = {
@@ -273,4 +297,5 @@ module.exports = {
     getuserbyid,
     deleteuser,
     forgotPassword,
-};
+    resetPassword
+}
