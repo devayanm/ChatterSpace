@@ -37,26 +37,97 @@ This feature will support structured conversations, threading, roles & permissio
 
 Once implemented, the project will follow this modular structure:
 
+### Frontend Folder Structure
 ```
-/chattersapce
-├── server/
-│   ├── models/
-│   ├── controllers/
-│   ├── routes/
-|   ├── .env.example
-|   ├── .env
-│   ├── sockets/
-│   └── server.js
-├── client/
-│   ├── components/
-│   ├── pages/
-│   |   └── AuthPage.jsx
-│   ├── hooks/
-│   └── App.jsx
-├── utils/
-├── .env.example
-├── .env
-└── README.md
+client/
+├─ public/
+│  └─ vite.svg
+├─ src/
+│  ├─ assets/
+│  │  └─ react.svg
+│  ├─ components/
+│  │  ├─ about.jsx
+│  │  ├─ chatbot.jsx
+│  │  ├─ footer.jsx
+│  │  ├─ Footer.md
+│  │  ├─ navbar.jsx
+│  │  ├─ ScrollToTop.jsx
+│  │  ├─ ScrollToTopLink.jsx
+│  │  └─ testimonilas.jsx
+│  ├─ pages/
+│  │  ├─ AboutPage.jsx
+│  │  ├─ AuthPage.jsx
+│  │  ├─ ChatPage.jsx
+│  │  ├─ CodeOfConductPage.jsx
+│  │  ├─ ContributingPage.jsx
+│  │  ├─ DocumentationPage.jsx
+│  │  ├─ FeatureRequestsPage.jsx
+│  │  ├─ FeaturesPage.jsx
+│  │  ├─ GettingStartedPage.jsx
+│  │  ├─ IssuesPage.jsx
+│  │  ├─ LandingPage.jsx
+│  │  ├─ LicensePage.jsx
+│  │  ├─ login.jsx
+│  │  ├─ PrivacyPolicyPage.jsx
+│  │  ├─ signup.jsx
+│  │  ├─ TechStackPage.jsx
+│  │  └─ TermsOfServicePage.jsx
+│  ├─ App.css
+│  ├─ App.jsx
+│  ├─ index.css
+│  ├─ main.jsx
+│  └─ theme.css
+├─ temp-client/
+│  ├─ public/
+│  │  └─ vite.svg
+│  ├─ src/
+│  │  ├─ assets/
+│  │  │  └─ react.svg
+│  │  ├─ App.css
+│  │  ├─ App.jsx
+│  │  ├─ index.css
+│  │  └─ main.jsx
+│  ├─ .gitignore
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ README.md
+│  └─ vite.config.js
+├─ .env.example
+├─ .gitignore
+├─ App.jsx
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.js
+├─ README.md
+├─ tailwind.config.js
+└─ vite.config.js
+
+```
+
+### Backend Folder Structure
+```
+server/
+├─ config/
+│  ├─ db.js
+│  └─ emailConfig.js
+├─ controllers/
+│  └─ authController.js
+├─ middleware/
+│  └─ auth.js
+├─ models/
+│  └─ User.js
+├─ routes/
+│  └─ authRoutes.js
+├─ .env.example
+├─ .gitignore
+├─ eslint.config.mjs
+├─ package-lock.json
+├─ package.json
+└─ server.js
 ```
 
 > Note: This repo currently contains only the README, contribution guide, and templates. All folders will be created during development milestones.
