@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MessageCircle,
   Menu,
@@ -8,9 +9,10 @@ import {
   Star,
 } from "lucide-react";
 
-const Navbar = ({ onLoginClick, onSignupClick }) => {
+const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("Home");
+    const navigate = useNavigate();
 
   const menuItems = [
     { name: "About", icon: <Info className="w-4 h-4" /> },
@@ -27,6 +29,13 @@ const Navbar = ({ onLoginClick, onSignupClick }) => {
       setIsMenuOpen(false);
     }
   };
+
+   const onLoginClick = ()=>{
+    navigate("/loginauth")
+  }
+  const onSignupClick =()=>{
+     navigate("/signup")
+  }
 
   return (
     <nav className="relative">
@@ -68,13 +77,13 @@ const Navbar = ({ onLoginClick, onSignupClick }) => {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={onLoginClick}
-              className="px-5 py-2 rounded-lg border border-white/30 text-white font-medium hover:bg-white/10 transition"
+              className="px-5 py-2 rounded-lg border border-white/30 text-white font-medium hover:bg-white/10 transition cursor-pointer"
             >
               Login
             </button>
             <button
               onClick={onSignupClick}
-              className="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold shadow hover:opacity-90 transition"
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold shadow hover:opacity-90 transition cursor-pointer"
             >
               Signup
             </button>
