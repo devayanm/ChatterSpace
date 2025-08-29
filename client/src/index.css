@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+*{
+  scroll-behavior: smooth;
+}
+
 /* Custom animations for footer enhancement */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }

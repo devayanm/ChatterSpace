@@ -17,6 +17,7 @@ import FeatureRequestsPage from "./pages/FeatureRequestsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import ChatPage from "./pages/ChatPage";
+import AboutPage from "./pages/AboutPage";
 
 import Signup from "./pages/signup.jsx";
 import LoginAuth from "./pages/login.jsx";
@@ -107,9 +108,9 @@ const App = () => {
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
         <Route path="/chat" element={<ChatPage socket={socket} />} />
-        <Route path="/loginauth" element={<LoginAuth />} />
+        <Route path="/about" element={<AboutPage />} />
+         <Route path="/loginauth" element={<LoginAuth />} />
         <Route path="/signup" element={<Signup/>} />
-
       </Routes>
     </>
   );
