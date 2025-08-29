@@ -1,10 +1,14 @@
-import React from 'react'
-import AuthPage from './pages/AuthPage'
+import React from 'react';
+import AuthPage from './pages/AuthPage';
+import FaqWidget from './components/FaqWidget'; 
 
 const App = () => {
   return (
-    <AuthPage/>
-  )
-}
+    <>
+      <AuthPage />
+      <FaqWidget />
+    </>
+  );
+};
 
-export default App
+export default App;
