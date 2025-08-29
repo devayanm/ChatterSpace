@@ -230,3 +230,16 @@ Then open a Pull Request on GitHub.
 ## 📄 License
 
 This project is open-source and available under the [MIT License](LICENSE).
+
+
+## 🚀 Local Setup Instructions
+
+Follow these steps to run the project locally:
+
+1. **Run these commands in terminal**
+   ```bash
+   git clone https://github.com/Chanchal2004/ChatterSpace.git
+   cd ChatterSpace
+   npm install
+   npm run dev
+
