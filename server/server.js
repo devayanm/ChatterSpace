@@ -3,6 +3,8 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
+const { version } = require('./package.json');
 
 const app = express();
 const server = http.createServer(app);
@@ -49,6 +51,20 @@ const io = new Server(server, {
 // Connect to database
 const connectDB = require('./config/db');
 connectDB();
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const dbStatus = dbState === 1 ? 'connected' : 'disconnected';
+  
+  res.json({
+    status: 'ok',
+    uptime: Math.floor(process.uptime()),
+    version,
+    time: new Date().toISOString(),
+    db: dbStatus
+  });
+});
 
 // Simple in-memory channels data
 let channels = [{ id: 'general', name: 'General', messages: [] }];
@@ -133,6 +149,8 @@ io.on('connection', (socket) => {
 // Authentication routes
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
+
+
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
