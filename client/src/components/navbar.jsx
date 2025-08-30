@@ -2,10 +2,17 @@
 import React, { useState } from 'react';
 import { MessageCircle, Menu, X } from 'lucide-react';
 
+// importing useNavigate
+import { useNavigate } from 'react-router-dom';
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const navigate = useNavigate();
+  const handleSignup = ()=>{
+    navigate('/authpage');
+  }
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/10 backdrop-blur-md border-b border-white/20">
@@ -25,12 +32,11 @@ export default function Navbar() {
             <a href="#" className="text-white hover:text-purple-300 transition">Home</a>
             <a href="#" className="text-white hover:text-purple-300 transition">About</a>
             <a href="#" className="text-white hover:text-purple-300 transition">Contact</a>
-            <a
-              href="#"
-              className="ml-4 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition"
+            <button
+              className="ml-4 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition" onClick={handleSignup}
             >
               Sign Up
-            </a>
+            </button>
           </div>
 
           {/* Mobile Hamburger Icon */}
@@ -47,12 +53,12 @@ export default function Navbar() {
             <a href="#" className="block text-white hover:text-purple-300 transition">Home</a>
             <a href="#" className="block text-white hover:text-purple-300 transition">About</a>
             <a href="#" className="block text-white hover:text-purple-300 transition">Contact</a>
-            <a
-              href="#"
-              className="block w-full text-center px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition"
+            <button
+        
+              className="block w-full text-center px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition" onClick={handleSignup}
             >
               Sign Up
-            </a>
+            </button>
           </div>
         )}
       </div>

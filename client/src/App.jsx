@@ -107,6 +107,7 @@ const App = () => {
         <Route path="/chat" element={<ChatPage socket={socket} />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="*" element={<NotFound/>} />
+        <Route path="/authpage" element={<AuthPage/>} />
       </Routes>
     </Router>
   );
