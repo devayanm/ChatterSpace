@@ -41,7 +41,7 @@ const AuthPage = ({ socket, typingUtils }) => {
     setErrorMessage("");
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/forgotpassword",
+        `${import.meta.env.VITE_API_URL}/api/auth/forgotpassword`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -89,8 +89,8 @@ const AuthPage = ({ socket, typingUtils }) => {
 
     try {
       const endpoint = isLogin
-        ? "http://localhost:5000/api/auth/login"
-        : "http://localhost:5000/api/auth/signup";
+        ? `${import.meta.env.VITE_API_URL}/api/auth/login`
+        : `${import.meta.env.VITE_API_URL}/api/auth/signup`;
       const body = isLogin
         ? { identifier: formData.email, password: formData.password }
         : {

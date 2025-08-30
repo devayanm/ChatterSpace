@@ -20,7 +20,7 @@ import ChatPage from "./pages/ChatPage";
 import AboutPage from "./pages/AboutPage";
 
 // Socket connection (change URL as needed)
-const socket = io("http://localhost:5000");
+const socket = io(import.meta.env.VITE_API_URL);
 
 const App = () => {
   const [typingUsers, setTypingUsers] = useState(new Set());
