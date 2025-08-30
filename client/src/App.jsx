@@ -18,9 +18,10 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import ChatPage from "./pages/ChatPage";
 import AboutPage from "./pages/AboutPage";
+import NotFound from "./pages/NotFound";
 
 // Socket connection (change URL as needed)
-const socket = io(import.meta.env.VITE_API_URL);
+const socket = io("http://localhost:3000");
 
 const App = () => {
   const [typingUsers, setTypingUsers] = useState(new Set());
@@ -105,6 +106,7 @@ const App = () => {
         <Route path="/terms" element={<TermsOfServicePage />} />
         <Route path="/chat" element={<ChatPage socket={socket} />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
     </Router>
   );
