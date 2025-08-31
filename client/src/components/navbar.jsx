@@ -2,17 +2,43 @@
 import React, { useState } from 'react';
 import { MessageCircle, Menu, X } from 'lucide-react';
 
-// importing useNavigate
-import { Link, useNavigate } from 'react-router-dom';
+// importing useNavigate and useLocation
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentpath = location.pathname;
+  // a condition to check whethere the current page is login/signup page
+  const hideLogout = currentpath==="/authpage";
+
   const handleSignup = ()=>{
     navigate('/authpage');
   }
+
+  // a function to handle Logout feature
+  const handleLogoutuser =async ()=>{
+        try {
+      const response = await fetch(`http://localhost:5000/api/auth/logout`, {
+        method: "GET", 
+        credentials: "include",
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // a message to verify the logout which is send by backend
+        console.log(data.message); 
+        navigate("/authpage"); 
+      } else {
+        console.error("Logout failed:", data.message);
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/10 backdrop-blur-md border-b border-white/20">
@@ -37,6 +63,8 @@ export default function Navbar() {
             >
               Sign Up
             </button>
+
+            {!hideLogout && <button className="ml-4 px-4 py-2 bg-gradient-to-r from-red-500 to-red-500 text-white rounded-lg hover:from-red-600 hover:to-red-600 transition" onClick={handleLogoutuser} >Log Out</button>}
           </div>
 
           {/* Mobile Hamburger Icon */}

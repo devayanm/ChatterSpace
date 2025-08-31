@@ -126,11 +126,15 @@ const loginUser = async (req, res) => {
 // @route POST /api/auth/logout
 // @access public 
 const logoutUser = async (req, res) => {
+    // for testing
+    console.log("Logout endpoint hit");
+    
   res.cookie("token", "", {
     httpOnly: true,
     expires: new Date(0),
   });
-  res.status(200).json({ success: true, message: "Logged out successfully" });
+  return res.status(200).json({ success: true, message: "Logged out successfully" });
+  
 };
 // by Samay2006
 // @desc Update user details (name, username, email)
