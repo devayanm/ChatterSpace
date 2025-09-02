@@ -29,7 +29,7 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/chat" className="text-white hover:text-purple-300 transition">Home</Link>
+            <Link to="/" className="text-white hover:text-purple-300 transition">Home</Link>
             <Link to="/about" className="text-white hover:text-purple-300 transition">About</Link>
             <Link to="/contact" className="text-white hover:text-purple-300 transition">Contact</Link>
             <button
