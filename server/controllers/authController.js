@@ -288,6 +288,39 @@ const resetPassword = async (req, res) => {
 }
 
 
+//contactUs
+
+
+const sendContactEmail = async (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  try {
+    const emailMessage = `
+      <h3>New Contact Query</h3>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Message:</strong></p>
+      <p>${message}</p>
+    `;
+
+    await sendMail(
+      process.env.SMTP_FROM_EMAIL,
+      subject || 'New Query',
+      emailMessage
+    );
+
+    res.status(200).json({ success: 'Email sent successfully!' });
+  } catch (error) {
+    console.error('Error in sending email:', error);
+    res.status(500).json({ error: 'Failed to send email' });
+  }
+};
+
+
 
 module.exports = {
     signupUser,
@@ -297,5 +330,6 @@ module.exports = {
     getuserbyid,
     deleteuser,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    sendContactEmail
 }

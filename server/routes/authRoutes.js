@@ -21,5 +21,7 @@ router.delete("/delete/:id",authController.deleteuser);
 
 // ⬅️ Add this new route for forgot password
 router.post('/forgotpassword', authController.forgotPassword); 
+//contactUs
+router.post('/send', authController.sendContactEmail);
 
 module.exports = router;

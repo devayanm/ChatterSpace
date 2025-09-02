@@ -18,7 +18,7 @@ const sendMail = async (to, subject, text, html) => {
       from: `"ChatterSpace" <${process.env.EMAIL_USER}>`,
       to,
       subject,
-      text,
+      html:text,
     };
 
     await transporter.sendMail(mailOptions);
