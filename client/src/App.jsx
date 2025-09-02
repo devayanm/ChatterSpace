@@ -21,6 +21,7 @@ import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
 import FaqWidget from "./components/FaqWidget"; // ✅ merged from feat/faq
+import ContactForm from "./pages/contact";
 
 // Socket connection (change URL as needed)
 const socket = io("http://localhost:3000");
@@ -109,6 +110,7 @@ const App = () => {
         <Route path="/chat" element={<ChatPage socket={socket} />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/authpage" element={<AuthPage />} />
+        <Route path="/contact" element={<ContactForm/>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
 
