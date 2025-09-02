@@ -169,7 +169,7 @@ const AuthPage = ({ socket, typingUtils }) => {
       {/* Content */}
       <div className="relative z-10 flex-1 flex">
         {/* Left Panel */}
-        <div className="hidden lg:flex lg:w-1/2 flex-col justify-center p-12">
+        <div className="hidden lg:flex lg:w-1/2 flex-col justify-center pt-20 p-12">
           <div className="max-w-md">
             <div className="flex items-center space-x-3 mb-8">
               <h1 className="text-3xl font-bold text-white">ChatterSpace</h1>
@@ -209,7 +209,7 @@ const AuthPage = ({ socket, typingUtils }) => {
           </div>
         </div>
         {/* Right Panel - Auth */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+        <div className="w-full lg:w-1/2 flex items-center justify-center pt-20 p-8">
           <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20">
 
             {/* Error message */}
