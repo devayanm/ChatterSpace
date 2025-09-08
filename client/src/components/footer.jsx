@@ -1,20 +1,24 @@
 import {
-    ExternalLink,
-    Github,
-    Heart,
-    Instagram,
-    Linkedin,
-    Mail,
-    MapPin,
-    MessageCircle,
-    Twitter
+  ExternalLink,
+  Github,
+  Heart,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Twitter,
+  Home,
+  BookOpen,
+  FileText,
+  Layers,
+  Users
 } from 'lucide-react';
 import ScrollToTopLink from './ScrollToTopLink';
 
 const Footer = ({ variant = 'default' }) => {
   const currentYear = new Date().getFullYear();
 
-  // Clean, structured footer variants focused on layout
   const getFooterStyle = () => {
     switch (variant) {
       case 'auth':
@@ -26,7 +30,6 @@ const Footer = ({ variant = 'default' }) => {
     }
   };
 
-  // Structured content sections for clear organization
   const footerSections = {
     about: {
       title: "About ChatterSpace",
@@ -36,20 +39,20 @@ const Footer = ({ variant = 'default' }) => {
       ]
     },
     quickLinks: [
-      { label: "Home", href: "/" },
-      { label: "Features", href: "/features" },
-      { label: "Getting Started", href: "/getting-started" },
-      { label: "Documentation", href: "/documentation" },
-      { label: "Tech Stack", href: "/tech-stack" },
-      { label: "How to Contribute", href: "/contributing" }
+      { label: "Home", href: "/", icon: <Home className="w-4 h-4 mr-2" /> },
+      { label: "Features", href: "/features", icon: <Layers className="w-4 h-4 mr-2" /> },
+      { label: "Getting Started", href: "/getting-started", icon: <BookOpen className="w-4 h-4 mr-2" /> },
+      { label: "Documentation", href: "/documentation", icon: <FileText className="w-4 h-4 mr-2" /> },
+      { label: "Tech Stack", href: "/tech-stack", icon: <Layers className="w-4 h-4 mr-2" /> },
+      { label: "How to Contribute", href: "/contributing", icon: <Users className="w-4 h-4 mr-2" /> }
     ],
     community: [
-      { label: "GitHub Repository", href: "https://github.com/devayanm/ChatterSpace" },
-      { label: "Contributing Guide", href: "/contributing" },
-      { label: "Code of Conduct", href: "/code-of-conduct" },
-      { label: "Issues & Bugs", href: "/issues" },
-      { label: "Feature Requests", href: "/feature-requests" },
-      { label: "MIT License", href: "/license" }
+      { label: "GitHub Repository", href: "https://github.com/devayanm/ChatterSpace", icon: <Github className="w-4 h-4 mr-2" /> },
+      { label: "Contributing Guide", href: "/contributing", icon: <FileText className="w-4 h-4 mr-2" /> },
+      { label: "Code of Conduct", href: "/code-of-conduct", icon: <FileText className="w-4 h-4 mr-2" /> },
+      { label: "Issues & Bugs", href: "/issues", icon: <ExternalLink className="w-4 h-4 mr-2" /> },
+      { label: "Feature Requests", href: "/feature-requests", icon: <ExternalLink className="w-4 h-4 mr-2" /> },
+      { label: "MIT License", href: "/license", icon: <FileText className="w-4 h-4 mr-2" /> }
     ],
     contact: {
       email: "devayan9689@gmail.com",
@@ -65,12 +68,8 @@ const Footer = ({ variant = 'default' }) => {
 
   return (
     <footer className={`${getFooterStyle()} transition-colors duration-300`}>
-      {/* Main Footer Frame - Structured Layout */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Primary Footer Content */}
         <div className="py-12 lg:py-16">
-          {/* Responsive Grid Layout */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             
             {/* About Section */}
@@ -100,11 +99,11 @@ const Footer = ({ variant = 'default' }) => {
                       key={index}
                       href={social.href}
                       aria-label={social.platform}
-                      className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors duration-200 group"
-                      target={social.href.startsWith('http') ? '_blank' : '_self'}
-                      rel={social.href.startsWith('http') ? 'noopener noreferrer' : ''}
+                      className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors duration-200 group"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      <div className="text-slate-400 group-hover:text-white transition-colors duration-200">
+                      <div className="text-slate-400 group-hover:text-blue-500 transition-colors duration-200">
                         {social.icon}
                       </div>
                     </a>
@@ -118,30 +117,14 @@ const Footer = ({ variant = 'default' }) => {
               <h4 className="text-sm font-semibold mb-6 tracking-wide uppercase">Quick Links</h4>
               <nav className="space-y-3">
                 {footerSections.quickLinks.map((link, index) => (
-                  link.href.startsWith('http') ? (
-                    <a
-                      key={index}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-sm opacity-80 hover:opacity-100 hover:text-blue-400 transition-all duration-200 group"
-                    >
-                      <span className="flex items-center">
-                        {link.label}
-                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                      </span>
-                    </a>
-                  ) : (
-                    <ScrollToTopLink
-                      key={index}
-                      to={link.href}
-                      className="block text-sm opacity-80 hover:opacity-100 hover:text-blue-400 transition-all duration-200 group"
-                    >
-                      <span className="flex items-center">
-                        {link.label}
-                      </span>
-                    </ScrollToTopLink>
-                  )
+                  <ScrollToTopLink
+                    key={index}
+                    to={link.href}
+                    className="flex items-center text-sm opacity-80 hover:opacity-100 hover:text-blue-500 transition-all duration-200"
+                  >
+                    {link.icon}
+                    {link.label}
+                  </ScrollToTopLink>
                 ))}
               </nav>
             </div>
@@ -151,30 +134,16 @@ const Footer = ({ variant = 'default' }) => {
               <h4 className="text-sm font-semibold mb-6 tracking-wide uppercase">Community</h4>
               <nav className="space-y-3">
                 {footerSections.community.map((link, index) => (
-                  link.href.startsWith('http') ? (
-                    <a
-                      key={index}
-                      href={link.href}
-                      className="block text-sm opacity-80 hover:opacity-100 hover:text-blue-400 transition-all duration-200 group"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span className="flex items-center">
-                        {link.label}
-                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                      </span>
-                    </a>
-                  ) : (
-                    <ScrollToTopLink
-                      key={index}
-                      to={link.href}
-                      className="block text-sm opacity-80 hover:opacity-100 hover:text-blue-400 transition-all duration-200 group"
-                    >
-                      <span className="flex items-center">
-                        {link.label}
-                      </span>
-                    </ScrollToTopLink>
-                  )
+                  <a
+                    key={index}
+                    href={link.href}
+                    target={link.href.startsWith('http') ? "_blank" : "_self"}
+                    rel="noopener noreferrer"
+                    className="flex items-center text-sm opacity-80 hover:opacity-100 hover:text-blue-500 transition-all duration-200"
+                  >
+                    {link.icon}
+                    {link.label}
+                  </a>
                 ))}
               </nav>
             </div>
@@ -189,13 +158,12 @@ const Footer = ({ variant = 'default' }) => {
                     <p className="text-sm font-medium">Email</p>
                     <a
                       href={`mailto:${footerSections.contact.email}`}
-                      className="text-sm opacity-80 hover:opacity-100 hover:text-blue-400 transition-colors duration-200"
+                      className="text-sm opacity-80 hover:opacity-100 hover:text-blue-500 transition-colors duration-200"
                     >
                       {footerSections.contact.email}
                     </a>
                   </div>
                 </div>
-                
                 <div className="flex items-start space-x-3">
                   <MapPin className="w-4 h-4 mt-1 text-blue-400 flex-shrink-0" />
                   <div>
@@ -203,8 +171,6 @@ const Footer = ({ variant = 'default' }) => {
                     <p className="text-sm opacity-80">{footerSections.contact.location}</p>
                   </div>
                 </div>
-
-                {/* Newsletter Signup */}
                 <div className="pt-4">
                   <p className="text-sm font-medium mb-3">Stay Updated</p>
                   <div className="flex flex-col sm:flex-row gap-2">
@@ -220,10 +186,11 @@ const Footer = ({ variant = 'default' }) => {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
-        {/* Footer Bottom - Copyright and Legal */}
+        {/* Footer Bottom */}
         <div className="border-t border-slate-700 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-2 text-sm opacity-70">
@@ -232,18 +199,18 @@ const Footer = ({ variant = 'default' }) => {
               <Heart className="w-4 h-4 text-red-500" />
               <span>by the open source community</span>
             </div>
-            
             <div className="flex items-center space-x-6 text-sm opacity-70">
-              <ScrollToTopLink to="/privacy" className="hover:opacity-100 hover:text-blue-400 transition-colors duration-200">
+              <ScrollToTopLink to="/privacy" className="hover:opacity-100 hover:text-blue-500 transition-colors duration-200">
                 Privacy Policy
               </ScrollToTopLink>
-              <ScrollToTopLink to="/terms" className="hover:opacity-100 hover:text-blue-400 transition-colors duration-200">
+              <ScrollToTopLink to="/terms" className="hover:opacity-100 hover:text-blue-500 transition-colors duration-200">
                 Terms of Service
               </ScrollToTopLink>
               <span className="text-xs">v1.0.0</span>
             </div>
           </div>
         </div>
+
       </div>
     </footer>
   );
