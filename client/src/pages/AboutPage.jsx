@@ -18,7 +18,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <motion.div className="p-8 bg-gradient-to-br from-gray-800 via-purple-600 to-gray-800 min-h-screen flex flex-col items-center text-white space-y-6">
+      <motion.div className="pt-16 px-8 bg-gradient-to-br from-gray-800 via-purple-600 to-gray-800 min-h-screen flex flex-col items-center text-white space-y-6">
         <motion.div className="flex flex-col justify-center items-center">
           <motion.h1
             className="font-extrabold text-9xl bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-white flex"

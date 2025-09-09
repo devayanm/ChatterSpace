@@ -61,7 +61,7 @@ const ChatPage = () => {
   ];
 
   return (
-    <div className="h-screen bg-slate-900 flex flex-col">
+    <div className="h-screen bg-slate-900 flex flex-col pt-16 md:pt-16">
       {/* Header */}
       <header className="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-4">

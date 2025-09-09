@@ -159,7 +159,7 @@ const AuthPage = ({ socket, typingUtils }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col pt-8">
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
@@ -172,7 +172,7 @@ const AuthPage = ({ socket, typingUtils }) => {
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-center p-12">
           <div className="max-w-md">
             <div className="flex items-center space-x-3 mb-8">
-              <h1 className="text-3xl font-bold text-white">ChatterSpace</h1>
+             <h1 className="font-bold text-white text-[49px]">ChatterSpace</h1>
               {socket && socket.connected && (
                 <div
                   className="w-3 h-3 bg-green-400 rounded-full animate-pulse"
