@@ -81,18 +81,32 @@ const Signup = () => {
 
   const handleSubmit = async () => {
     const newErrors = validateForm();
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
     setIsLoading(true);
-    
-    // Simulate API call
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      alert('Account created successfully!');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          username: formData.email.split('@')[0],
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrors({ general: data.message || data.error || 'Signup failed. Please try again.' });
+        return;
+      }
       setFormData({
         firstName: '',
         lastName: '',
@@ -101,8 +115,10 @@ const Signup = () => {
         confirmPassword: ''
       });
       setAgreedToTerms(false);
+      setErrors({});
+      alert('Account created successfully! You are now logged in.');
     } catch (error) {
-      setErrors({ general: 'Signup failed. Please try again.' });
+      setErrors({ general: 'Unable to connect to the server. Please try again later.' });
     } finally {
       setIsLoading(false);
     }
