@@ -227,6 +227,16 @@ Then open a Pull Request on GitHub.
 
 ---
 
+## 👥 Contributors
+
+Thanks to everyone who has contributed to ChatterSpace!
+
+<a href="https://github.com/devayanm/ChatterSpace/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=devayanm/ChatterSpace" alt="Contributors" />
+</a>
+
+---
+
 ## 📄 License
 
 This project is open-source and available under the [MIT License](LICENSE).
