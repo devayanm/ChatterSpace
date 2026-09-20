@@ -32,6 +32,7 @@ export default function Navbar() {
             <Link to="/chat" className="text-white hover:text-purple-300 transition">Home</Link>
             <Link to="/about" className="text-white hover:text-purple-300 transition">About</Link>
             <Link to="/contact" className="text-white hover:text-purple-300 transition">Contact</Link>
+            <Link to="/faq" className="text-white hover:text-purple-300 transition">FAQ</Link>
             <button
               className="ml-4 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition" onClick={handleSignup}
             >
@@ -53,6 +54,7 @@ export default function Navbar() {
             <a href="#" className="block text-white hover:text-purple-300 transition">Home</a>
             <a href="#" className="block text-white hover:text-purple-300 transition">About</a>
             <a href="#" className="block text-white hover:text-purple-300 transition">Contact</a>
+            <Link to="/faq" className="block text-white hover:text-purple-300 transition">FAQ</Link>
             <button
         
               className="block w-full text-center px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition" onClick={handleSignup}
