@@ -124,6 +124,7 @@ const AuthPage = ({ socket, typingUtils }) => {
       }
 
       if (isLogin) {
+        sessionStorage.setItem('chatterspace_auth', '1');
         navigate("/chat");
       } else {
         setIsLogin(true);

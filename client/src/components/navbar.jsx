@@ -29,7 +29,7 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/chat" className="text-white hover:text-purple-300 transition">Home</Link>
+            <Link to="/" className="text-white hover:text-purple-300 transition">Home</Link>
             <Link to="/about" className="text-white hover:text-purple-300 transition">About</Link>
             <Link to="/contact" className="text-white hover:text-purple-300 transition">Contact</Link>
             <button
@@ -50,7 +50,7 @@ export default function Navbar() {
         {/* Mobile Dropdown Menu */}
         {menuOpen && (
           <div className="md:hidden mt-2 px-4 pb-4 space-y-2 bg-white/10 backdrop-blur-lg rounded-lg border border-white/20">
-            <a href="#" className="block text-white hover:text-purple-300 transition">Home</a>
+            <Link to="/" className="block text-white hover:text-purple-300 transition">Home</Link>
             <a href="#" className="block text-white hover:text-purple-300 transition">About</a>
             <a href="#" className="block text-white hover:text-purple-300 transition">Contact</a>
             <button

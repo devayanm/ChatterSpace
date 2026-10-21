@@ -21,6 +21,7 @@ import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
 import FaqWidget from "./components/FaqWidget"; // ✅ merged from feat/faq
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Socket connection (change URL as needed)
 const socket = io("http://localhost:3000");
@@ -106,7 +107,7 @@ const App = () => {
         <Route path="/feature-requests" element={<FeatureRequestsPage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
-        <Route path="/chat" element={<ChatPage socket={socket} />} />
+        <Route path="/chat" element={<ProtectedRoute><ChatPage socket={socket} /></ProtectedRoute>} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/authpage" element={<AuthPage />} />
         <Route path="*" element={<NotFound />} />
