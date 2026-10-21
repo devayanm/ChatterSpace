@@ -19,6 +19,7 @@ import TermsOfServicePage from "./pages/TermsOfServicePage";
 import ChatPage from "./pages/ChatPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
+import ContactPage from "./pages/ContactPage";
 
 import FaqWidget from "./components/FaqWidget"; // ✅ merged from feat/faq
 
@@ -85,6 +86,7 @@ const App = () => {
         </div>
       )}
 
+      <div className="pt-16">
       <Routes>
         <Route
           path="/"
@@ -108,10 +110,12 @@ const App = () => {
         <Route path="/terms" element={<TermsOfServicePage />} />
         <Route path="/chat" element={<ChatPage socket={socket} />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/authpage" element={<AuthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 
+      </div>
       {/* ✅ Always available floating FAQ widget */}
       <FaqWidget />
     </Router>
