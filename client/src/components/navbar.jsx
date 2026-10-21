@@ -10,9 +10,16 @@ export default function Navbar() {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const navigate = useNavigate();
-  const handleSignup = ()=>{
+  const handleSignup = () => {
     navigate('/authpage');
-  }
+  };
+
+  const isAuthenticated = sessionStorage.getItem('chatterspace_auth') === '1';
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('chatterspace_auth');
+    navigate('/');
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/10 backdrop-blur-md border-b border-white/20">
@@ -32,11 +39,21 @@ export default function Navbar() {
             <Link to="/chat" className="text-white hover:text-purple-300 transition">Home</Link>
             <Link to="/about" className="text-white hover:text-purple-300 transition">About</Link>
             <Link to="/contact" className="text-white hover:text-purple-300 transition">Contact</Link>
-            <button
-              className="ml-4 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition" onClick={handleSignup}
-            >
-              Sign Up
-            </button>
+            {isAuthenticated ? (
+              <button
+                className="ml-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
+            ) : (
+              <button
+                className="ml-4 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition"
+                onClick={handleSignup}
+              >
+                Sign Up
+              </button>
+            )}
           </div>
 
           {/* Mobile Hamburger Icon */}
