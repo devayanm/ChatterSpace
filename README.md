@@ -243,3 +243,12 @@ Follow these steps to run the project locally:
    npm install
    npm run dev
 
+
+
+## 👥 Contributors
+
+Thanks to everyone who has contributed to ChatterSpace!
+
+[![Contributors](https://contrib.rocks/image?repo=devayanm/ChatterSpace)](https://github.com/devayanm/ChatterSpace/graphs/contributors)
+
+Contributions of any kind are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.

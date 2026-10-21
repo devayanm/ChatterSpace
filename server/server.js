@@ -53,6 +53,18 @@ connectDB();
 // Simple in-memory channels data
 let channels = [{ id: 'general', name: 'General', messages: [] }];
 
+// Health check endpoint
+const { version } = require('./package.json');
+const startTime = Date.now();
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    uptime: Math.floor((Date.now() - startTime) / 1000),
+    version,
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // REST API routes
 app.get('/api/channels', (req, res) => {
   res.json(channels);
